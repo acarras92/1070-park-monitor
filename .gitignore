@@ -1,0 +1,8 @@
+.env
+venv/
+__pycache__/
+*.pyc
+logs/*.log
+state/seen.json
+.firecrawl/
+.DS_Store

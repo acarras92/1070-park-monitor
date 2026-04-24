@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1070 Park Avenue — Listing Monitor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f1419;
+    color: #e1e8ed;
+    min-height: 100vh;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  a { color: #3b82f6; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header */
+  .header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a3040;
+  }
+  .header .row1 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; }
+  .header .sub { font-size: 14px; color: #8899a6; margin-top: 4px; }
+  .header .updated { font-size: 12px; color: #5c6e7e; margin-top: 6px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #1a1f2e;
+    border: 1px solid #2a3040;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #e1e8ed;
+  }
+  .badge .count {
+    background: #2ecc71;
+    color: #0f1419;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 0 7px;
+    min-width: 18px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .badge .count.zero { background: #3b4050; color: #8899a6; }
+  .badge .count.contract { background: #f59e0b; color: #0f1419; }
+
+  /* Sections */
+  .section {
+    background: #1a1f2e;
+    border: 1px solid #2a3040;
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+  }
+  .section h2 {
+    font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .section h2 .n { font-size: 12px; font-weight: 500; color: #8899a6; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; padding: 10px 12px;
+    color: #8899a6; font-weight: 500; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid #2a3040;
+    user-select: none; cursor: pointer;
+  }
+  th:hover { color: #e1e8ed; }
+  th.sorted-asc::after { content: ' ▲'; color: #3b82f6; }
+  th.sorted-desc::after { content: ' ▼'; color: #3b82f6; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1e2536; color: #e1e8ed; vertical-align: top; }
+  tr:hover td { background: #1e2536; }
+  .right { text-align: right; }
+
+  .pill {
+    display: inline-block; padding: 2px 10px;
+    border-radius: 999px; font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .pill.active    { background: #1e3a2a; color: #2ecc71; }
+  .pill.contract  { background: #3a2e1a; color: #f59e0b; }
+  .pill.sold      { background: #1e2536; color: #8899a6; }
+  .pill.offmarket { background: #2a1e1e; color: #e74c3c; }
+
+  /* Comp card */
+  .comp-card {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .comp-card .photo {
+    width: 140px; height: 105px;
+    background: #0f1419; border-radius: 8px;
+    object-fit: cover; border: 1px solid #2a3040;
+  }
+  .comp-card .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .comp-card .stat .label { font-size: 11px; color: #8899a6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .comp-card .stat .value { font-size: 18px; font-weight: 600; color: #fff; }
+  .comp-card .stat .sub { font-size: 12px; color: #8899a6; margin-top: 2px; }
+  .comp-card .broker { font-size: 13px; color: #8899a6; margin-top: 14px; }
+
+  /* Timeline */
+  .timeline-unit { margin-bottom: 18px; }
+  .timeline-unit:last-child { margin-bottom: 0; }
+  .timeline-unit h3 {
+    font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px;
+    padding-bottom: 6px; border-bottom: 1px dashed #2a3040;
+  }
+  .timeline-event {
+    display: grid; grid-template-columns: 160px 80px 1fr;
+    gap: 12px; padding: 7px 0; font-size: 13px;
+    align-items: baseline;
+  }
+  .timeline-event .ts { color: #5c6e7e; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .timeline-event .kind { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .timeline-event .kind.new { color: #2ecc71; }
+  .timeline-event .kind.price { color: #f59e0b; }
+  .timeline-event .kind.status { color: #3b82f6; }
+  .timeline-event .note { color: #e1e8ed; }
+
+  /* Credit gauge */
+  .gauge-wrap { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .gauge-bar {
+    flex: 1; min-width: 260px;
+    height: 22px;
+    background: #0f1419;
+    border: 1px solid #2a3040;
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .gauge-fill {
+    height: 100%;
+    transition: width 0.3s;
+    background: #2ecc71;
+  }
+  .gauge-fill.yellow { background: #f59e0b; }
+  .gauge-fill.red    { background: #e74c3c; }
+  .gauge-legend { display: flex; gap: 20px; font-size: 13px; flex-wrap: wrap; }
+  .gauge-legend .num { font-size: 20px; font-weight: 700; color: #fff; display: block; }
+  .gauge-legend .lab { font-size: 11px; color: #8899a6; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .empty { color: #5c6e7e; font-size: 13px; text-align: center; padding: 24px 0; }
+  .loading { text-align: center; padding: 60px; color: #5c6e7e; font-size: 14px; }
+
+  @media (max-width: 600px) {
+    .comp-card { grid-template-columns: 1fr; }
+    .comp-card .photo { width: 100%; height: 180px; }
+    .comp-card .stats { grid-template-columns: repeat(2, 1fr); }
+    .timeline-event { grid-template-columns: 1fr; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="row1">
+    <div>
+      <h1 id="buildingName">1070 Park Avenue</h1>
+      <div class="sub" id="buildingSub">Prewar co-op · Carnegie Hill · 87th–88th</div>
+      <div class="updated" id="lastUpdated">Loading…</div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <span class="badge">
+        <span>Active</span>
+        <span class="count" id="activeBadge">–</span>
+      </span>
+      <span class="badge">
+        <span>In Contract</span>
+        <span class="count contract" id="contractBadge">–</span>
+      </span>
+      <a class="badge" id="streetEasyLink" href="#" target="_blank" rel="noopener">StreetEasy ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Current listings <span class="n" id="currentCount"></span></h2>
+  <div id="currentListings"><div class="loading">Loading…</div></div>
+</div>
+
+<div class="section">
+  <h2>Unit 4E comp <span class="n">In-contract reference</span></h2>
+  <div id="compCard"><div class="loading">Loading…</div></div>
+</div>
+
+<div class="section">
+  <h2>Listing timeline <span class="n">Status + price changes per unit</span></h2>
+  <div id="timeline"><div class="loading">Loading…</div></div>
+</div>
+
+<div class="section">
+  <h2>Recent runs <span class="n">Last 30</span></h2>
+  <div id="runLog"><div class="loading">Loading…</div></div>
+</div>
+
+<div class="section">
+  <h2>Firecrawl credits <span class="n" id="creditCycle"></span></h2>
+  <div id="creditGauge"><div class="loading">Loading…</div></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmtUSD = (v) => v == null ? '—' : '$' + Number(v).toLocaleString();
+const fmtInt = (v) => v == null ? '—' : Number(v).toLocaleString();
+const fmtNum = (v) => v == null ? '—' : String(v);
+const fmtTsShort = (iso) => {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', {year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+};
+const fmtDateShort = (iso) => {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'});
+};
+
+function statusPill(status) {
+  const s = (status || '').toLowerCase();
+  if (s === 'active') return `<span class="pill active">active</span>`;
+  if (s === 'in_contract') return `<span class="pill contract">in contract</span>`;
+  if (s === 'sold') return `<span class="pill sold">sold</span>`;
+  if (s === 'off_market') return `<span class="pill offmarket">off market</span>`;
+  return `<span class="pill sold">${status || '—'}</span>`;
+}
+
+function renderHeader(d) {
+  if (d.building) {
+    $('buildingName').textContent = d.building.name || '1070 Park Avenue';
+    const subBits = [d.building.type, d.building.neighborhood].filter(Boolean);
+    if (d.building.cross_streets) subBits.push(d.building.cross_streets);
+    $('buildingSub').textContent = subBits.join(' · ');
+    if (d.building.streeteasy_url) $('streetEasyLink').href = d.building.streeteasy_url;
+  }
+  $('lastUpdated').textContent = 'Last updated: ' + fmtTsShort(d.last_updated);
+
+  const active = (d.current_listings || []).filter(l => (l.status || '').toLowerCase() === 'active').length;
+  const contract = (d.current_listings || []).filter(l => (l.status || '').toLowerCase() === 'in_contract').length;
+  const ab = $('activeBadge');
+  ab.textContent = active;
+  if (active === 0) ab.classList.add('zero');
+  const cb = $('contractBadge');
+  cb.textContent = contract;
+  if (contract === 0) cb.classList.add('zero');
+}
+
+// Sortable table
+let sortState = { col: null, dir: 'asc' };
+function renderCurrent(d) {
+  const listings = d.current_listings || [];
+  $('currentCount').textContent = `${listings.length} listing${listings.length === 1 ? '' : 's'}`;
+  const container = $('currentListings');
+  if (listings.length === 0) {
+    container.innerHTML = '<div class="empty">No active or in-contract listings on StreetEasy.</div>';
+    return;
+  }
+
+  const cols = [
+    { key: 'unit', label: 'Unit' },
+    { key: 'price', label: 'Price', right: true },
+    { key: 'bedrooms', label: 'Beds', right: true },
+    { key: 'bathrooms', label: 'Baths', right: true },
+    { key: 'square_feet', label: 'Sqft', right: true },
+    { key: 'price_per_sqft', label: '$/sf', right: true },
+    { key: 'status', label: 'Status' },
+    { key: 'source', label: 'Source' },
+    { key: 'broker', label: 'Broker' },
+  ];
+
+  const rows = listings.slice();
+  if (sortState.col) {
+    const c = sortState.col;
+    rows.sort((a, b) => {
+      const av = a[c], bv = b[c];
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      if (typeof av === 'number' && typeof bv === 'number') return sortState.dir === 'asc' ? av - bv : bv - av;
+      return sortState.dir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }
+
+  let html = '<table><thead><tr>';
+  for (const c of cols) {
+    const cls = (sortState.col === c.key) ? (sortState.dir === 'asc' ? 'sorted-asc' : 'sorted-desc') : '';
+    html += `<th data-col="${c.key}" class="${cls}${c.right ? ' right' : ''}">${c.label}</th>`;
+  }
+  html += '</tr></thead><tbody>';
+  for (const l of rows) {
+    html += '<tr>';
+    html += `<td><a href="${l.listing_url}" target="_blank" rel="noopener">${l.unit || '—'}</a></td>`;
+    html += `<td class="right">${fmtUSD(l.price)}</td>`;
+    html += `<td class="right">${fmtNum(l.bedrooms)}</td>`;
+    html += `<td class="right">${fmtNum(l.bathrooms)}</td>`;
+    html += `<td class="right">${fmtInt(l.square_feet)}</td>`;
+    html += `<td class="right">${l.price_per_sqft ? '$' + l.price_per_sqft.toLocaleString() : '—'}</td>`;
+    html += `<td>${statusPill(l.status)}</td>`;
+    html += `<td>${l.source || '—'}</td>`;
+    html += `<td>${l.broker || '—'}</td>`;
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  container.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortState.col === col) sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+      else { sortState.col = col; sortState.dir = 'asc'; }
+      renderCurrent(d);
+    });
+  });
+}
+
+function renderCompCard(d) {
+  const listings = d.current_listings || [];
+  // Find 4E specifically, or the first in_contract / active listing as a fallback.
+  let comp = listings.find(l => (l.unit || '').toUpperCase() === '4E');
+  if (!comp) comp = listings.find(l => (l.status || '').toLowerCase() === 'in_contract');
+  if (!comp) comp = listings[0];
+  const container = $('compCard');
+  if (!comp) {
+    container.innerHTML = '<div class="empty">No listings to build a comp card from.</div>';
+    return;
+  }
+  const sqftText = comp.square_feet ? fmtInt(comp.square_feet) + ' sqft' : 'sqft not listed';
+  const ppsfText = comp.price_per_sqft ? '$' + comp.price_per_sqft.toLocaleString() : 'n/a (sqft missing)';
+  const photoHtml = comp.image_url
+    ? `<img class="photo" src="${comp.image_url}" alt="Unit ${comp.unit}"/>`
+    : `<div class="photo" style="display:flex;align-items:center;justify-content:center;color:#5c6e7e;font-size:12px;">no photo</div>`;
+
+  container.innerHTML = `
+    ${photoHtml}
+    <div>
+      <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px;">
+        <div style="font-size:20px; font-weight:700; color:#fff;">Unit ${comp.unit || '—'}</div>
+        ${statusPill(comp.status)}
+        <a href="${comp.listing_url}" target="_blank" rel="noopener" style="font-size:12px;">view listing ↗</a>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Ask</div>
+          <div class="value">${fmtUSD(comp.price)}</div>
+          <div class="sub">${sqftText}</div>
+        </div>
+        <div class="stat">
+          <div class="label">$/sf</div>
+          <div class="value">${ppsfText}</div>
+          <div class="sub">${comp.square_feet ? 'based on listed sqft' : 'StreetEasy does not show sqft'}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Layout</div>
+          <div class="value">${fmtNum(comp.bedrooms)}BR / ${fmtNum(comp.bathrooms)}BA</div>
+          <div class="sub">${comp.maintenance ? 'maint: ' + fmtUSD(comp.maintenance) + '/mo' : 'maint not shown'}</div>
+        </div>
+      </div>
+      ${comp.broker ? `<div class="broker">Listing by ${comp.broker}</div>` : ''}
+    </div>
+  `;
+}
+
+function renderTimeline(d) {
+  const history = d.history || {};
+  const units = Object.keys(history).sort();
+  const container = $('timeline');
+  if (units.length === 0) {
+    container.innerHTML = '<div class="empty">No timeline events yet — first changes will appear here after the next 8 AM sweep.</div>';
+    return;
+  }
+  let html = '';
+  for (const u of units) {
+    const events = (history[u] || []).slice().sort((a, b) => (a.ts || '').localeCompare(b.ts || ''));
+    html += `<div class="timeline-unit"><h3>Unit ${u}</h3>`;
+    for (const e of events) {
+      const kindClass = e.kind === 'first_seen' ? 'new' : (e.kind === 'price' ? 'price' : 'status');
+      const kindLabel = e.kind === 'first_seen' ? 'new' : e.kind;
+      html += `
+        <div class="timeline-event">
+          <span class="ts">${fmtTsShort(e.ts)}</span>
+          <span class="kind ${kindClass}">${kindLabel}</span>
+          <span class="note">${e.note || ''}</span>
+        </div>`;
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function renderRunLog(d) {
+  const log = (d.run_log || []).slice().reverse().slice(0, 30);
+  const container = $('runLog');
+  if (log.length === 0) {
+    container.innerHTML = '<div class="empty">No runs recorded yet.</div>';
+    return;
+  }
+  let html = '<table><thead><tr>' +
+    '<th>When</th><th>Mode</th><th class="right">Listings</th><th class="right">Changes</th>' +
+    '<th class="right">Credits</th><th class="right">Remaining</th><th class="right">Alerts</th><th>Status</th>' +
+    '</tr></thead><tbody>';
+  for (const r of log) {
+    html += '<tr>';
+    html += `<td>${fmtTsShort(r.ts)}</td>`;
+    html += `<td>${r.mode}</td>`;
+    html += `<td class="right">${fmtInt(r.listings_found)}</td>`;
+    html += `<td class="right">${fmtInt(r.changes)}</td>`;
+    html += `<td class="right">${r.credits_used == null ? '—' : r.credits_used}</td>`;
+    html += `<td class="right">${fmtInt(r.credits_remaining)}</td>`;
+    html += `<td class="right">${fmtInt(r.alerts_sent)}</td>`;
+    html += `<td>${statusPill(r.status === 'ok' ? 'active' : r.status === 'fallback' ? 'in_contract' : 'off_market')}</td>`;
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function renderCreditGauge(d) {
+  const c = d.credits || {};
+  const plan = c.plan_credits || 3000;
+  const remaining = c.remaining_credits;
+  const used = c.used_this_cycle;
+  const container = $('creditGauge');
+  if (remaining == null || used == null) {
+    container.innerHTML = '<div class="empty">Credit data not yet recorded.</div>';
+    return;
+  }
+  const pct = Math.max(0, Math.min(100, (used / plan) * 100));
+  const fillClass = pct > 80 ? 'red' : (pct > 50 ? 'yellow' : '');
+
+  const cycleStart = c.billing_period_start ? fmtDateShort(c.billing_period_start) : '—';
+  const cycleEnd = c.billing_period_end ? fmtDateShort(c.billing_period_end) : '—';
+  $('creditCycle').textContent = `${cycleStart} → ${cycleEnd}`;
+
+  container.innerHTML = `
+    <div class="gauge-wrap">
+      <div class="gauge-bar">
+        <div class="gauge-fill ${fillClass}" style="width: ${pct}%;"></div>
+      </div>
+      <div class="gauge-legend">
+        <div><span class="num">${fmtInt(used)}</span><span class="lab">Used</span></div>
+        <div><span class="num">${fmtInt(remaining)}</span><span class="lab">Remaining</span></div>
+        <div><span class="num">${fmtInt(plan)}</span><span class="lab">Plan</span></div>
+        <div><span class="num">${pct.toFixed(1)}%</span><span class="lab">Utilization</span></div>
+      </div>
+    </div>
+  `;
+}
+
+async function load() {
+  try {
+    const res = await fetch('data.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    renderHeader(d);
+    renderCurrent(d);
+    renderCompCard(d);
+    renderTimeline(d);
+    renderRunLog(d);
+    renderCreditGauge(d);
+  } catch (e) {
+    document.body.innerHTML = `<div class="loading" style="color:#e74c3c;">Failed to load data.json: ${e.message}</div>`;
+  }
+}
+
+load();
+</script>
+
+</body>
+</html>

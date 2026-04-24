@@ -1,0 +1,33 @@
+{
+  "building": {
+    "name": "1070 Park Avenue",
+    "address": "1070 Park Avenue, New York, NY 10128",
+    "neighborhood": "Carnegie Hill / Upper East Side",
+    "cross_streets": "87th and 88th",
+    "type": "prewar co-op"
+  },
+  "price_change_threshold_usd": 1,
+  "building_keywords": ["1070 park", "1070-park"],
+
+  "minimal_mode": {
+    "streeteasy_building_url": "https://streeteasy.com/building/1070-park-avenue-new_york"
+  },
+
+  "full_mode": {
+    "direct_urls": {
+      "streeteasy": "https://streeteasy.com/building/1070-park-avenue-new_york",
+      "cityrealty": "https://www.cityrealty.com/nyc/carnegie-hill/1070-park-avenue/19435"
+    },
+    "search_domains": [
+      "compass.com",
+      "corcoran.com",
+      "elliman.com",
+      "bhsusa.com",
+      "sothebysrealty.com",
+      "zillow.com",
+      "realtor.com",
+      "redfin.com"
+    ],
+    "search_query": "1070 Park Avenue New York NY 10128 for sale"
+  }
+}
