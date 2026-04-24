@@ -1,0 +1,49 @@
+{
+  "building": {
+    "name": "1070 Park Avenue",
+    "address": "1070 Park Avenue, New York, NY 10128",
+    "neighborhood": "Carnegie Hill / Upper East Side",
+    "cross_streets": "87th and 88th",
+    "type": "prewar co-op",
+    "streeteasy_url": "https://streeteasy.com/building/1070-park-avenue-new_york"
+  },
+  "last_updated": "2026-04-24T15:02:27Z",
+  "current_listings": [
+    {
+      "source": "streeteasy",
+      "listing_url": "https://streeteasy.com/building/1070-park-avenue-new_york/4e",
+      "unit": "4E",
+      "price": 2350000,
+      "bedrooms": 2.0,
+      "bathrooms": 2.5,
+      "square_feet": null,
+      "price_per_sqft": null,
+      "maintenance": null,
+      "broker": "Brown Harris Stevens",
+      "status": "in_contract",
+      "listed_date": null,
+      "image_url": "https://photos.zillowstatic.com/fp/5d6c9a0c84b48121538a4640ef09cc20-se_medium_500_250.jpeg",
+      "scraped_at": "2026-04-24T15:02:26.813956+00:00"
+    }
+  ],
+  "history": {},
+  "run_log": [
+    {
+      "ts": "2026-04-24T15:02:27Z",
+      "mode": "minimal",
+      "listings_found": 1,
+      "changes": 0,
+      "credits_used": 1,
+      "credits_remaining": 2450,
+      "alerts_sent": 0,
+      "status": "ok"
+    }
+  ],
+  "credits": {
+    "plan_credits": 3000,
+    "remaining_credits": 2450,
+    "used_this_cycle": 550,
+    "billing_period_start": "2026-04-10T12:47:06.000Z",
+    "billing_period_end": "2026-05-10T12:47:06.000Z"
+  }
+}
