@@ -7,25 +7,8 @@
     "type": "prewar co-op",
     "streeteasy_url": "https://streeteasy.com/building/1070-park-avenue-new_york"
   },
-  "last_updated": "2026-04-30T12:00:14Z",
-  "current_listings": [
-    {
-      "source": "streeteasy",
-      "listing_url": "https://streeteasy.com/building/1070-park-avenue-new_york/4e",
-      "unit": "4E",
-      "price": 2350000,
-      "bedrooms": 2.0,
-      "bathrooms": 2.5,
-      "square_feet": null,
-      "price_per_sqft": null,
-      "maintenance": null,
-      "broker": "Brown Harris Stevens",
-      "status": "in_contract",
-      "listed_date": null,
-      "image_url": "https://photos.zillowstatic.com/fp/5d6c9a0c84b48121538a4640ef09cc20-se_medium_500_250.jpeg",
-      "scraped_at": "2026-04-30T12:00:14.422585+00:00"
-    }
-  ],
+  "last_updated": "2026-05-01T13:33:58Z",
+  "current_listings": [],
   "history": {},
   "run_log": [
     {
@@ -97,13 +80,23 @@
       "credits_remaining": 94693,
       "alerts_sent": 0,
       "status": "ok"
+    },
+    {
+      "ts": "2026-05-01T13:33:58Z",
+      "mode": "minimal",
+      "listings_found": 0,
+      "changes": 0,
+      "credits_used": null,
+      "credits_remaining": null,
+      "alerts_sent": 0,
+      "status": "ok"
     }
   ],
   "credits": {
-    "plan_credits": 100000,
-    "remaining_credits": 94693,
-    "used_this_cycle": 5307,
-    "billing_period_start": "2026-04-10T12:47:06.000Z",
-    "billing_period_end": "2026-05-10T12:47:06.000Z"
+    "plan_credits": null,
+    "remaining_credits": null,
+    "used_this_cycle": null,
+    "billing_period_start": "",
+    "billing_period_end": ""
   }
 }
