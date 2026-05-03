@@ -7,7 +7,7 @@
     "type": "prewar co-op",
     "streeteasy_url": "https://streeteasy.com/building/1070-park-avenue-new_york"
   },
-  "last_updated": "2026-05-02T12:00:22Z",
+  "last_updated": "2026-05-03T12:00:20Z",
   "current_listings": [
     {
       "source": "streeteasy",
@@ -23,7 +23,7 @@
       "status": "in_contract",
       "listed_date": null,
       "image_url": "https://photos.zillowstatic.com/fp/5d6c9a0c84b48121538a4640ef09cc20-se_medium_500_250.jpeg",
-      "scraped_at": "2026-05-02T12:00:22.582428+00:00"
+      "scraped_at": "2026-05-03T12:00:19.496086+00:00"
     }
   ],
   "history": {},
@@ -117,12 +117,22 @@
       "credits_remaining": 94514,
       "alerts_sent": 0,
       "status": "ok"
+    },
+    {
+      "ts": "2026-05-03T12:00:20Z",
+      "mode": "minimal",
+      "listings_found": 1,
+      "changes": 0,
+      "credits_used": 1,
+      "credits_remaining": 94513,
+      "alerts_sent": 0,
+      "status": "ok"
     }
   ],
   "credits": {
     "plan_credits": 100000,
-    "remaining_credits": 94514,
-    "used_this_cycle": 5486,
+    "remaining_credits": 94513,
+    "used_this_cycle": 5487,
     "billing_period_start": "2026-04-10T12:47:06.000Z",
     "billing_period_end": "2026-05-10T12:47:06.000Z"
   }
